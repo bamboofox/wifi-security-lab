@@ -135,7 +135,7 @@ class Handler(SimpleHTTPRequestHandler):
             self.wfile.write(self.result)
             return
 
-        if not re.fullmatch(r"/(?:index\.html|gallery\.html|lab\.(?:css|js)|images/(?:one|two|three)\.svg)?", self.path):
+        if not re.fullmatch(r"/(?:index\.html|gallery\.html|lab\.(?:css|js)|images/(?:one|two|three)\.jpg)?", self.path):
             self.send_error(404)
             return
         if self.path == "/":

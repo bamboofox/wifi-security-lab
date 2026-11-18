@@ -1,6 +1,6 @@
 # BambooFox Wi-Fi Security 練習
 
-兩個可獨立操作的課堂練習。需要 Python 3、支援 TLS 1.3 的 Python SSL 模組，以及 PATH 中的 `openssl`。使用 Python 標準函式庫。
+瀏覽器練習需要 Python 3、支援 TLS 1.3 的 Python SSL 模組，以及 PATH 中的 `openssl`。也可直接用 Wireshark 開啟隨附封包。
 
 ```sh
 python3 lab.py
@@ -12,7 +12,7 @@ python3 lab.py
 
 ## 1. 比較 HTTP 與 TLS
 
-先預測傳輸途中哪一種會出現 `fox-student`，再按「顯示 HTTP / TLS 實測」。
+先預測傳輸途中哪一種會出現 `fox-student`，再按「比較 HTTP 與 TLS」。
 
 - 左欄的樣本資料固定，畫面沒有可填寫或提交的憑證。
 - 右欄的 HTTP 顯示本機 socket pair 收到的固定請求位元組。TLS 欄位顯示兩個本機 TLS 端點在記憶體中實際交換的應用資料記錄，並檢查完整記錄是否包含固定明文。
@@ -21,9 +21,13 @@ python3 lab.py
 
 ## 2. 比較圖片完整性
 
-點「圖片完整性」，先記下 A、B、C 的差異。按「重播圖片替換」會顯示三張相同的圖，也可以從裝置選擇 PNG、JPEG 或 WebP。按「返回原始圖片」再比較。自選圖留在瀏覽器內。
+開啟「相簿」。按「模擬替換」或從裝置選擇 PNG、JPEG 或 WebP，三張圖片會同時換成相同的圖。按「還原原圖」切回阿波羅 11 號的照片。自選圖留在瀏覽器內。
 
 這一頁是瀏覽器內的回應結果模擬。討論時把三個位置標出來：原始檔案、傳輸中的內容、瀏覽器顯示的內容。再說明經過驗證的 TLS 如何保護傳輸完整性。
+
+## 3. Wireshark 封包練習
+
+[操作步驟與預期結果](wireshark/README.md) · [本機實測封包檔](wireshark/http-tls-loopback.pcap)
 
 ## 檢查
 

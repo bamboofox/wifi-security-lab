@@ -3,60 +3,48 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>Foxframe · HTTP / TLS 練習</title>
+		<title>帳號 · Foxframe</title>
 		<link rel="stylesheet" href="lab.css" />
 		<script src="lab.js" defer></script>
 	</head>
 	<body>
 		<header>
-			<a href="index.html">Foxframe</a>
-			<nav aria-label="練習">
-				<a aria-current="page" href="index.html">HTTP / TLS</a>
-				<a href="gallery.html">圖片完整性</a>
+			<nav class="wrap" aria-label="網站導覽">
+				<a class="wordmark" href="gallery.html">Foxframe</a>
+				<a href="gallery.html">相簿</a>
+				<a aria-current="page" href="index.html">帳號</a>
 			</nav>
 		</header>
-		<main>
-			<p class="eyebrow">BambooFox Wi-Fi Security</p>
-			<h1>同一份資料，傳輸途中看得到嗎？</h1>
-			<div class="columns">
-				<section class="panel">
-					<h2>範例登入畫面</h2>
-					<p>課堂樣本，使用固定公開資料。</p>
-					<dl class="fields">
-						<div>
-							<dt>示範帳號</dt>
-							<dd>fox-student</dd>
-						</div>
-						<div>
-							<dt>課程代號</dt>
-							<dd>wifi-security</dd>
-						</div>
-					</dl>
-					<button id="compare" type="button">顯示 HTTP / TLS 實測</button>
-					<p class="status" id="status" role="status"></p>
-				</section>
-				<section class="panel evidence" aria-labelledby="evidence-title">
-					<h2 id="evidence-title">傳輸中的位元組</h2>
-					<p id="prompt">
-						先猜一猜哪一邊看得到
-						<code>fox-student</code>
-						。
-					</p>
-					<div id="results" hidden>
-						<h3>
-							HTTP
-							<span id="http-state"></span>
-						</h3>
-						<pre id="plain"></pre>
-						<h3>
-							TLS
-							<span id="tls-state"></span>
-						</h3>
-						<pre id="encrypted"></pre>
-						<p id="verification"></p>
+		<main class="wrap account">
+			<section aria-labelledby="account-title">
+				<h1 id="account-title">示範帳號</h1>
+				<dl>
+					<div>
+						<dt>帳號</dt>
+						<dd>fox-student</dd>
 					</div>
-				</section>
-			</div>
+					<div>
+						<dt>課程</dt>
+						<dd>wifi-security</dd>
+					</div>
+				</dl>
+				<button id="compare" type="button" aria-controls="results" aria-expanded="false">比較 HTTP 與 TLS</button>
+				<p id="status" role="status"></p>
+			</section>
+			<section id="results" aria-labelledby="results-title" hidden>
+				<h2 id="results-title">傳輸內容</h2>
+				<h3>
+					HTTP
+					<span id="http-state"></span>
+				</h3>
+				<pre id="plain"></pre>
+				<h3>
+					TLS
+					<span id="tls-state"></span>
+				</h3>
+				<pre id="encrypted"></pre>
+				<p id="verification"></p>
+			</section>
 		</main>
 	</body>
 </html>
