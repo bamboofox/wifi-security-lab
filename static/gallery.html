@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-Hant">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Foxframe · 圖片完整性</title>
+		<link rel="stylesheet" href="lab.css" />
+		<script src="lab.js" defer></script>
+	</head>
+	<body>
+		<header>
+			<a href="index.html">Foxframe</a>
+			<nav aria-label="練習">
+				<a href="index.html">HTTP / TLS</a>
+				<a aria-current="page" href="gallery.html">圖片完整性</a>
+			</nav>
+		</header>
+		<main>
+			<p class="eyebrow">BambooFox Wi-Fi Security</p>
+			<h1>網頁收到的圖片，可以跟來源不同</h1>
+			<p>在瀏覽器重播兩種結果，比對固定的原始圖片與替換圖。</p>
+			<div class="controls">
+				<button type="button" id="toggle" aria-pressed="false">重播圖片替換</button>
+				<label>
+					自選替換圖
+					<input id="replacement" type="file" accept="image/png,image/jpeg,image/webp" />
+				</label>
+				<p id="status" class="status" role="status">目前顯示原始圖片</p>
+			</div>
+			<div class="gallery">
+				<figure>
+					<img src="images/one.svg" alt="原圖 A" />
+					<figcaption>圖 A</figcaption>
+				</figure>
+				<figure>
+					<img src="images/two.svg" alt="原圖 B" />
+					<figcaption>圖 B</figcaption>
+				</figure>
+				<figure>
+					<img src="images/three.svg" alt="原圖 C" />
+					<figcaption>圖 C</figcaption>
+				</figure>
+			</div>
+			<p class="footnote">在頁面內模擬回應內容。圖片只從裝置讀取，原始檔案維持原樣。</p>
+		</main>
+	</body>
+</html>

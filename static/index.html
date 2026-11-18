@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-Hant">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Foxframe · HTTP / TLS 練習</title>
+		<link rel="stylesheet" href="lab.css" />
+		<script src="lab.js" defer></script>
+	</head>
+	<body>
+		<header>
+			<a href="index.html">Foxframe</a>
+			<nav aria-label="練習">
+				<a aria-current="page" href="index.html">HTTP / TLS</a>
+				<a href="gallery.html">圖片完整性</a>
+			</nav>
+		</header>
+		<main>
+			<p class="eyebrow">BambooFox Wi-Fi Security</p>
+			<h1>同一份資料，傳輸途中看得到嗎？</h1>
+			<div class="columns">
+				<section class="panel">
+					<h2>範例登入畫面</h2>
+					<p>課堂樣本，使用固定公開資料。</p>
+					<dl class="fields">
+						<div>
+							<dt>示範帳號</dt>
+							<dd>fox-student</dd>
+						</div>
+						<div>
+							<dt>課程代號</dt>
+							<dd>wifi-security</dd>
+						</div>
+					</dl>
+					<button id="compare" type="button">顯示 HTTP / TLS 實測</button>
+					<p class="status" id="status" role="status"></p>
+				</section>
+				<section class="panel evidence" aria-labelledby="evidence-title">
+					<h2 id="evidence-title">傳輸中的位元組</h2>
+					<p id="prompt">
+						先猜一猜哪一邊看得到
+						<code>fox-student</code>
+						。
+					</p>
+					<div id="results" hidden>
+						<h3>
+							HTTP
+							<span id="http-state"></span>
+						</h3>
+						<pre id="plain"></pre>
+						<h3>
+							TLS
+							<span id="tls-state"></span>
+						</h3>
+						<pre id="encrypted"></pre>
+						<p id="verification"></p>
+					</div>
+				</section>
+			</div>
+		</main>
+	</body>
+</html>
