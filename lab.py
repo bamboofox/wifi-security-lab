@@ -1,18 +1,24 @@
-"""Local classroom UI with a fixed HTTP and TLS experiment."""
+"""Local classroom UI for HTTP, TLS, and demo sign-in."""
 
 import argparse
+import io
 import json
 import re
+import secrets
 import socket
 import ssl
 import subprocess
 import tempfile
 from functools import partial
+from http.cookies import CookieError, SimpleCookie
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from time import monotonic
 
 STATIC = Path(__file__).resolve().parent / "static"
 BODY = b"alias=fox-student&lesson=wifi-security"
+COOKIE = "foxframe_demo"
+SESSION_SECONDS = 600
 REQUEST = (
     b"POST /lesson HTTP/1.1\r\n"
     b"Host: localhost\r\n"
@@ -116,15 +122,16 @@ def evidence():
 
 
 class Handler(SimpleHTTPRequestHandler):
-    def __init__(self, *args, result, **kwargs):
+    def __init__(self, *args, result, sessions, **kwargs):
         self.result = result
+        self.sessions = sessions
         super().__init__(*args, directory=str(STATIC), **kwargs)
 
-    def do_GET(self):
+    def send_head(self):
         if self.path == "/favicon.ico":
             self.send_response(204)
             self.end_headers()
-            return
+            return None
 
         if self.path == "/evidence.json":
             self.send_response(200)
@@ -132,15 +139,74 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_header("Cache-Control", "no-store")
             self.send_header("Content-Length", str(len(self.result)))
             self.end_headers()
-            self.wfile.write(self.result)
-            return
+            return io.BytesIO(self.result)
 
-        if not re.fullmatch(r"/(?:index\.html|gallery\.html|lab\.(?:css|js)|images/(?:one|two|three)\.jpg)?", self.path):
+        if self.path == "/account.html":
+            if self.sessions.get(self.session_token(), 0) <= monotonic():
+                self.redirect("/login.html")
+                return None
+            return super().send_head()
+
+        if not re.fullmatch(r"/(?:(?:index|gallery|login)\.html|lab\.(?:css|js)|images/(?:one|two|three)\.jpg)?", self.path):
             self.send_error(404)
-            return
+            return None
         if self.path == "/":
             self.path = "/index.html"
-        super().do_GET()
+        return super().send_head()
+
+    def end_headers(self):
+        if self.path == "/account.html":
+            self.send_header("Cache-Control", "no-store")
+        super().end_headers()
+
+    def do_POST(self):
+        if self.path == "/logout":
+            self.sessions.pop(self.session_token(), None)
+            self.redirect("/login.html", cookie_value="", max_age=0)
+            return
+
+        if self.path != "/login":
+            self.send_error(404)
+            return
+
+        if (
+            self.headers.get_content_type() != "application/x-www-form-urlencoded"
+            or self.headers.get("Content-Length") != str(len(BODY))
+            or self.rfile.read(len(BODY)) != BODY
+        ):
+            self.send_error(400, "Use the fixed demo account")
+            return
+
+        now = monotonic()
+        for token, expiration in self.sessions.copy().items():
+            if expiration <= now:
+                self.sessions.pop(token, None)
+        self.sessions.pop(self.session_token(), None)
+        token = secrets.token_urlsafe(24)
+        self.sessions[token] = now + SESSION_SECONDS
+        self.redirect("/account.html", cookie_value=token, max_age=SESSION_SECONDS)
+
+    def session_token(self):
+        cookies = SimpleCookie()
+        try:
+            cookies.load(self.headers.get("Cookie", ""))
+        except CookieError:
+            return None
+        session = cookies.get(COOKIE)
+        return session.value if session else None
+
+    def redirect(self, location, *, cookie_value=None, max_age=0):
+        self.send_response(303)
+        self.send_header("Location", location)
+        if cookie_value is not None:
+            self.send_header(
+                "Set-Cookie",
+                f"{COOKIE}={cookie_value}; Path=/; Max-Age={max_age}; HttpOnly; SameSite=Strict",
+            )
+        if self.path != "/account.html":
+            self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Length", "0")
+        self.end_headers()
 
 
 def main():
@@ -150,7 +216,8 @@ def main():
     if not ssl.HAS_TLSv1_3:
         parser.error("Python needs TLS 1.3 support. Try a current Python from python.org or Homebrew.")
     result = json.dumps(evidence()).encode("utf-8")
-    with ThreadingHTTPServer(("127.0.0.1", args.port), partial(Handler, result=result)) as server:
+    handler = partial(Handler, result=result, sessions={})
+    with ThreadingHTTPServer(("127.0.0.1", args.port), handler) as server:
         print(f"http://127.0.0.1:{server.server_port}", flush=True)
         try:
             server.serve_forever()

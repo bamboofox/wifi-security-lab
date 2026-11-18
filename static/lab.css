@@ -133,6 +133,9 @@ figcaption {
 	grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
 	gap: 32px;
 }
+.signin {
+	max-width: 28rem;
+}
 dl {
 	margin-block: 18px;
 }
